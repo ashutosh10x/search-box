@@ -23,6 +23,7 @@ export default class Home extends Component {
 
 
     onListItemClick (event, item, index) {
+        console.log('ss')
         this.setState({
             selectedItems: [...this.state.selectedItems, item]
         })
@@ -71,10 +72,12 @@ export default class Home extends Component {
         document.removeEventListener('mousedown', this.handleClickOutside.bind(this));
     }
 
-    handleClickOutside() {
-       this.setState({
-            outClick: true
-       })
+    handleClickOutside(e) {
+       if (this.wrapperRef && !this.wrapperRef.contains(e.target)) {
+           this.setState({
+                outClick: true
+           })
+       }
     }
 
     focusInput () {
@@ -85,6 +88,7 @@ export default class Home extends Component {
        const selectedItems = this.state.selectedItems
        const searchList = this.state.searchList
        const outSideClick = this.state.outClick
+       console.log(selectedItems, 'selectedItems')
         return (
             <div className="home-body">
                 <section>
@@ -99,11 +103,13 @@ export default class Home extends Component {
                         </input>
                     </div>
                 </section>
-                <SearchList 
+                <div ref={i => this.wrapperRef = i}>
+                 <SearchList         
                     outClick={outSideClick}
                     searchList={searchList} 
                     handleKeyDown={(e, item) => this.handleKeyDown(e, item)} 
-                    onListItemClick={(e, item, i) => this.onListItemClick(e, item, i)}/>
+                    onListItemClick={this.onListItemClick.bind(this)}/>
+                </div>
             </div>
         )
     }

@@ -10,3 +10,21 @@ export function customDebounce (fn, d) {
     	}, d);
 	};
 };
+
+// to cache the top 10 new query
+export function memoizer (fn) {
+    let cache = {}
+	let counter = 0
+    return function (n){
+        if (cache[n] !== undefined) {
+          return cache[n].result
+        } else {
+          let result = fn(n)
+		  if (cache[n].counter > 10) {
+			delete cache[n]
+		  }
+          cache[n] = {result, counter}
+          return result
+        }
+    }
+}

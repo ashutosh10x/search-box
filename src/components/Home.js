@@ -1,12 +1,11 @@
 import React, { Component } from 'react'
 import './css/home.css'
 import { fetchData } from './api'
-import {customDebounce, memoizer} from './utility'
+import {customDebounce} from './utility'
 import SearchList from './SearchList'
 import SelectedList from './SelectedList'
 
 const searchAPIDebounced = (fn, d) => customDebounce(fn, d)
-console.log(searchAPIDebounced, memoizer)
 
 export default class Home extends Component {
 

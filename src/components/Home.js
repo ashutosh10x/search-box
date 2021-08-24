@@ -52,14 +52,16 @@ export default class Home extends Component {
             serachStr: text
         })
 
+        // const a = searchAPIDebounced(fetchData, 200)
+        // const out = a(text)
+        // console.log(out)
         try {
-              fetchData(text).then((data) => {
-                console.log('fetchData', data)
+            searchAPIDebounced(fetchData(text).then((data) => {
                 this.setState({
                     searchList: data.Search,
                     totalResults: data.totalResults
                 })
-            }).catch((e) => console.log(e))
+            }).catch((e) => console.log(e)), 200)
             
         } catch (e) {
             console.log(e)
@@ -76,7 +78,6 @@ export default class Home extends Component {
     }
 
     handleClickOutside() {
-        console.log('abdjbdjh', this)
        this.setState({
             outClick: true
        })

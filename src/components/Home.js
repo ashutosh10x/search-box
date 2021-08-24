@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
 import './css/home.css'
 import { fetchData } from './api'
-import {customDebounce} from './utility'
+import {customDebounce, memoizer} from './utility'
 import SearchList from './SearchList'
 import SelectedList from './SelectedList'
 
 const searchAPIDebounced = (fn, d) => customDebounce(fn, d)
-console.log(searchAPIDebounced)
+console.log(searchAPIDebounced, memoizer)
 
 export default class Home extends Component {
 
@@ -51,10 +51,6 @@ export default class Home extends Component {
             outClick: false,
             serachStr: text
         })
-
-        // const a = searchAPIDebounced(fetchData, 200)
-        // const out = a(text)
-        // console.log(out)
         try {
             searchAPIDebounced(fetchData(text).then((data) => {
                 this.setState({
@@ -66,7 +62,6 @@ export default class Home extends Component {
         } catch (e) {
             console.log(e)
         }
-
     }
 
     componentDidMount() {

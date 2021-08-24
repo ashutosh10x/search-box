@@ -46,8 +46,12 @@ export default class Home extends Component {
     }
 
     handleChange (e) {
-        console.log(e, e.target.value)
         const text = e.target.value
+        this.setState({
+            outClick: false,
+            serachStr: text
+        })
+
         try {
               fetchData(text).then((data) => {
                 console.log('fetchData', data)
@@ -72,6 +76,7 @@ export default class Home extends Component {
     }
 
     handleClickOutside() {
+        console.log('abdjbdjh', this)
        this.setState({
             outClick: true
        })
@@ -84,7 +89,7 @@ export default class Home extends Component {
     render() {
        const selectedItems = this.state.selectedItems
        const searchList = this.state.searchList
-
+       const outSideClick = this.state.outClick
         return (
             <div className="home-body">
                 <section>
@@ -100,6 +105,7 @@ export default class Home extends Component {
                     </div>
                 </section>
                 <SearchList 
+                    outClick={outSideClick}
                     searchList={searchList} 
                     handleKeyDown={(e, item) => this.handleKeyDown(e, item)} 
                     onListItemClick={(e, item, i) => this.onListItemClick(e, item, i)}/>

@@ -8,7 +8,7 @@ export default function SearchList(props) {
     }): []
 
     const ulStyle = {
-        display: props.searchList && props.searchList.length > 0 ? 'block' : 'none'
+        display: props.searchList && props.searchList.length > 0 && !props.outClick ? 'block' : 'none'
     }
 
     return (<div><ul style={ulStyle}>{items}</ul></div>)   

@@ -2,20 +2,23 @@ import React, { Component } from 'react'
 import './css/home.css'
 import { fetchData } from './api'
 import {customDebounce} from './utility'
+import SearchList from './SearchList'
+import SelectedList from './SelectedList'
 
-// const searchAPIDebounced = (fn, d) => customDebounce(fn, d)
+const searchAPIDebounced = (fn, d) => customDebounce(fn, d)
+console.log(searchAPIDebounced)
 
 export default class Home extends Component {
 
     constructor (props) {
         super(props)
-
         this.state = {
             searchList: [],
             totalResults: 0,
             selectedItems: [],
             serachStr: '',
-            fetching: false
+            fetching: false,
+            outClick: false
         }
     }
 
@@ -42,19 +45,17 @@ export default class Home extends Component {
         })
     }
 
-    async handleChange (e) {
+    handleChange (e) {
         console.log(e, e.target.value)
         const text = e.target.value
         try {
-            customDebounce((e) => {
-                fetchData(text).then((data) => {
-                    console.log('fetchData', data)
-                    this.setState({
-                        searchList: data.Search,
-                        totalResults: data.totalResults
-                    })
-                }).catch((e) => console.log(e))
-              }, 100)
+              fetchData(text).then((data) => {
+                console.log('fetchData', data)
+                this.setState({
+                    searchList: data.Search,
+                    totalResults: data.totalResults
+                })
+            }).catch((e) => console.log(e))
             
         } catch (e) {
             console.log(e)
@@ -62,32 +63,46 @@ export default class Home extends Component {
 
     }
 
-    render() {
-        const items = this.state.searchList ? this.state.searchList.map((item, i) => {
-            return (<li key={i} onKeyDown={(e) => this.handleKeyDown(e, item)} onClick={(e) => this.onListItemClick(e, item, i)}>{item.Title}</li>)
-        }): []
+    componentDidMount() {
+        document.addEventListener('mousedown', this.handleClickOutside.bind(this));
+    }
 
-        const selectedItems = this.state.selectedItems ? this.state.selectedItems.map((item, i) => {
-            return (<div key={i} class="selectedItem">
-                        <span key={i + 'span'}>{item.Title}</span>
-                        <span key={i + 'close'} className="close" onClick={(e) => this.removeSelectedItem(e, i)}>X</span>
-                </div>)
-        }) : []
+    componentWillUnmount() {
+        document.removeEventListener('mousedown', this.handleClickOutside.bind(this));
+    }
+
+    handleClickOutside() {
+       this.setState({
+            outClick: true
+       })
+    }
+
+    focusInput () {
+        this.textInput.focus();
+    }
+
+    render() {
+       const selectedItems = this.state.selectedItems
+       const searchList = this.state.searchList
 
         return (
             <div className="home-body">
-                
                 <section>
-                    <div className="editable-box">
-                        {selectedItems}
-                        <input type="text" className="input-box" onChange={(e) => this.handleChange(e)} placeholder="Search..."></input>
-                        {/* <div className="" contentEditable="true" onInput={(e) => this.handleChange(e)}></div> */}
+                    <div className="editable-box" onClick={this.focusInput.bind(this)}>
+                        <SelectedList selectedItems={selectedItems} removeSelectedItem={this.removeSelectedItem.bind(this)} />
+                        <input 
+                            ref={ i => this.textInput = i} 
+                            type="text" 
+                            className="input-box" 
+                            onChange={(e) => this.handleChange(e)} 
+                            placeholder="Search...">
+                        </input>
                     </div>
-                    {/* <input type="text" className="input-box" onChange={(e) => this.handleChange(e)} placeholder="Search..."></input> */}
                 </section>
-                <section>
-                    <ul>{items}</ul>
-                </section>
+                <SearchList 
+                    searchList={searchList} 
+                    handleKeyDown={(e, item) => this.handleKeyDown(e, item)} 
+                    onListItemClick={(e, item, i) => this.onListItemClick(e, item, i)}/>
             </div>
         )
     }
